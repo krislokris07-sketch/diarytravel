@@ -590,10 +590,17 @@ function renderCurrent() {
     
     leftContent.appendChild(questionDiv);
   });
+
+  const weatherTitle = document.createElement('div');
+weatherTitle.className = 'question-text';
+weatherTitle.textContent = 'Каким магическим настроением был наполнен этот день?';
+weatherTitle.style.marginBottom = '10px';
+weatherTitle.style.textAlign = 'center';
+leftContent.appendChild(weatherTitle);
   
   // Иконки погоды/настроения
-  const weatherDiv = document.createElement('div');
-  weatherDiv.className = 'weather-icons';
+ const weatherDiv = document.createElement('div');
+weatherDiv.className = 'weather-icons';
   
   chapters[currentPage].weatherIcons.forEach((icon, index) => {
     const iconDiv = document.createElement('div');

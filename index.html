@@ -77,10 +77,18 @@ body {
   height: calc(100% - 80px);
 }
 
-h1 {
-  font-size: 26px;
+/* Заголовок главы на левой странице */
+.chapter-title {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
   text-align: center;
-  margin-top: 0;
+  transform: translateY(-50%) rotate(-90deg);
+  font-size: 26px;
+  margin: 0;
+  color: #2b1b0f;
+  pointer-events: none;
 }
 
 .placeholder {
@@ -183,14 +191,23 @@ const nextBtn = document.getElementById('nextBtn');
 
 function renderCurrent() {
   book.innerHTML = '';
-  const page = document.createElement('div');
-  page.className = 'page';
+  
+  // Левая страница с названием главы
+  const leftPage = document.createElement('div');
+  leftPage.className = 'page';
+  
+  const chapterTitle = document.createElement('h1');
+  chapterTitle.className = 'chapter-title';
+  chapterTitle.textContent = chapters[currentPage].title;
+  leftPage.appendChild(chapterTitle);
+  
+  // Правая страница с контентом
+  const rightPage = document.createElement('div');
+  rightPage.className = 'page';
+  
   const content = document.createElement('div');
   content.className = 'page-content';
-  const h1 = document.createElement('h1');
-  h1.textContent = chapters[currentPage].title;
-  content.appendChild(h1);
-
+  
   if (chapters[currentPage].content.trim() === '') {
     const placeholder = document.createElement('div');
     placeholder.className = 'placeholder';
@@ -201,9 +218,12 @@ function renderCurrent() {
     body.innerHTML = chapters[currentPage].content;
     content.appendChild(body);
   }
-
-  page.appendChild(content);
-  book.appendChild(page);
+  
+  rightPage.appendChild(content);
+  
+  // Добавляем обе страницы в книгу
+  book.appendChild(leftPage);
+  book.appendChild(rightPage);
 }
 
 function goToPage(index) {

@@ -91,13 +91,127 @@ body {
   pointer-events: none;
 }
 
-.placeholder {
-  text-align: center;
-  font-style: italic;
-  color: rgba(0,0,0,0.4);
-  margin-top: 150px;
-  font-size: 18px;
-  letter-spacing: 1px;
+/* Авторский текст на правой странице */
+.author-text {
+  padding: 40px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #2b1b0f;
+  text-align: justify;
+  white-space: pre-line;
+}
+
+/* Стили для форм */
+.question {
+  margin-bottom: 25px;
+  border-bottom: 1px dashed #8B7355;
+  padding-bottom: 15px;
+}
+
+.question-text {
+  font-weight: bold;
+  margin-bottom: 12px;
+  color: #2b1b0f;
+}
+
+.option {
+  margin: 8px 0;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.option input {
+  margin-right: 10px;
+  transform: scale(1.2);
+}
+
+.option label {
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.text-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #8B7355;
+  padding: 8px 0;
+  margin: 10px 0;
+  font-family: 'Georgia', serif;
+  font-size: 14px;
+  color: #2b1b0f;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.text-input:focus {
+  border-bottom: 2px solid #5D4037;
+}
+
+.text-area {
+  width: 100%;
+  height: 300px;
+  background: transparent;
+  border: 1px solid #8B7355;
+  padding: 15px;
+  margin: 10px 0;
+  font-family: 'Georgia', serif;
+  font-size: 14px;
+  color: #2b1b0f;
+  outline: none;
+  resize: none;
+  line-height: 1.5;
+  border-radius: 4px;
+}
+
+.text-area:focus {
+  border: 2px solid #5D4037;
+}
+
+.weather-icons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin: 20px 0;
+  padding: 15px;
+  border-top: 1px dashed #8B7355;
+  border-bottom: 1px dashed #8B7355;
+}
+
+.weather-icon {
+  font-size: 24px;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.weather-icon:hover {
+  background: rgba(139, 115, 85, 0.2);
+  transform: scale(1.1);
+}
+
+.weather-icon.selected {
+  background: rgba(93, 64, 55, 0.3);
+  transform: scale(1.1);
+}
+
+.save-notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: rgba(93, 64, 55, 0.9);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.save-notification.show {
+  opacity: 1;
 }
 
 /* кнопки навигации */
@@ -172,58 +286,357 @@ button:hover {
   </div>
 </div>
 
+<div id="saveNotification" class="save-notification">Ответы сохранены!</div>
+
 <script>
+// Шаблон данных для всех глав с авторским текстом
 const chapters = [
-  { title: "Глава 1", content: "" },
-  { title: "Глава 2", content: "" },
-  { title: "Глава 3", content: "" },
-  { title: "Глава 4", content: "" },
-  { title: "Глава 5", content: "" },
-  { title: "Глава 6", content: "" },
-  { title: "Глава 7", content: "" }
+  {
+    title: "Глава 1",
+    authorText: `Здесь вы можете написать свой авторский текст для Главы 1.
+    
+Это может быть введение, описание дня, ваши мысли и наблюдения.
+Текст будет отображаться на правой странице.
+
+Вы можете писать столько текста, сколько хотите - ограничений по символам нет.
+Просто замените этот текст своим собственным.`,
+    questions: [
+      {
+        text: "Какое у вас сегодня настроение?",
+        type: "radio",
+        options: ["Отличное ☀️", "Хорошее 😊", "Нормальное 😐", "Плохое ☁️"]
+      },
+      {
+        text: "Что вас больше всего впечатлило сегодня?",
+        type: "checkbox",
+        options: ["Природа 🌿", "Архитектура 🏛️", "Люди 👥", "Еда 🍲", "Погода 🌈"]
+      },
+      {
+        text: "Ваша главная цель на сегодня:",
+        type: "text",
+        placeholder: "Напишите свою цель..."
+      }
+    ],
+    weatherIcons: ["☀️", "⛅", "🌧️", "❄️", "🌪️"]
+  },
+  {
+    title: "Глава 2",
+    authorText: `Ваш авторский текст для Главы 2.
+
+Опишите события этого дня, поделитесь мыслями или дайте задания пользователю.
+Текст будет красиво отформатирован и легко читаться.`,
+    questions: [
+      {
+        text: "Как вы себя чувствуете физически?",
+        type: "radio",
+        options: ["Энергично 💪", "Устало 😴", "Комфортно 🛋️", "Напряженно 🏃"]
+      },
+      {
+        text: "Что нового вы узнали сегодня?",
+        type: "checkbox",
+        options: ["Историю 📜", "Культуру 🎭", "Традиции 🎎", "Язык 🗣️", "Природу 🌺"]
+      },
+      {
+        text: "Самый запоминающийся момент:",
+        type: "text",
+        placeholder: "Опишите момент..."
+      }
+    ],
+    weatherIcons: ["☀️", "⛅", "🌧️", "❄️", "🌪️"]
+  },
+  {
+    title: "Глава 3",
+    authorText: `Авторский текст для Главы 3.
+
+Пишите здесь всё, что считаете важным для этой главы.
+Пользователь увидит этот текст на правой странице дневника.`,
+    questions: [
+      {
+        text: "Ваш уровень энергии сегодня:",
+        type: "radio",
+        options: ["Высокий 🔥", "Средний ⚡", "Низкий 🔋", "Переменный 🔄"]
+      },
+      {
+        text: "Что вызвало у вас улыбку?",
+        type: "checkbox",
+        options: ["Встреча 🤝", "Пейзаж 🏞️", "Еда 🍕", "Разговор 💬", "Музыка 🎵"]
+      },
+      {
+        text: "Что вы хотите запомнить навсегда:",
+        type: "text",
+        placeholder: "Опишите воспоминание..."
+      }
+    ],
+    weatherIcons: ["☀️", "⛅", "🌧️", "❄️", "🌪️"]
+  },
+  {
+    title: "Глава 4",
+    authorText: `Авторский текст для Главы 4.
+
+Заполните этот раздел своим содержанием.
+Текст сохранит переносы строк и будет выглядеть естественно.`,
+    questions: [
+      {
+        text: "Насколько продуктивным был ваш день?",
+        type: "radio",
+        options: ["Очень 📈", "Средне 📊", "Мало 📉", "Отдыхал 🛌"]
+      },
+      {
+        text: "Какие эмоции преобладали сегодня?",
+        type: "checkbox",
+        options: ["Радость 😄", "Удивление 😲", "Спокойствие 🧘", "Волнение 😅", "Ностальгия 🕰️"]
+      },
+      {
+        text: "Самое важное открытие дня:",
+        type: "text",
+        placeholder: "Поделитесь открытием..."
+      }
+    ],
+    weatherIcons: ["☀️", "⛅", "🌧️", "❄️", "🌪️"]
+  },
+  {
+    title: "Глава 5",
+    authorText: `Авторский текст для Главы 5.
+
+Это ваше пространство для творчества и общения с пользователем.
+Пишите инструкции, размышления или описания.`,
+    questions: [
+      {
+        text: "Как вы оцените этот день?",
+        type: "radio",
+        options: ["Идеальный 🌟", "Хороший 👍", "Обычный 👌", "Сложный 💼"]
+      },
+      {
+        text: "Что помогло вам сегодня?",
+        type: "checkbox",
+        options: ["Люди 👨‍👩‍👧‍👦", "Погода 🌤️", "Удача 🍀", "Планирование 📋", "Интуиция 🔮"]
+      },
+      {
+        text: "Чему вы научились сегодня:",
+        type: "text",
+        placeholder: "Напишите о новом знании..."
+      }
+    ],
+    weatherIcons: ["☀️", "⛅", "🌧️", "❄️", "🌪️"]
+  },
+  {
+    title: "Глава 6",
+    authorText: `Авторский текст для Главы 6.
+
+Используйте это место для своих заметок.
+Текст будет отображаться именно так, как вы его напишете.`,
+    questions: [
+      {
+        text: "Ваше общее впечатление от дня:",
+        type: "radio",
+        options: ["Восхитительно 🤩", "Приятно 😌", "Нейтрально 😐", "Разочарованно 😞"]
+      },
+      {
+        text: "Что вдохновило вас сегодня?",
+        type: "checkbox",
+        options: ["Искусство 🎨", "Природа 🌄", "Люди 💫", "Архитектура 🏰", "Музыка 🎼"]
+      },
+      {
+        text: "Ваши планы на завтра:",
+        type: "text",
+        placeholder: "Опишите планы..."
+      }
+    ],
+    weatherIcons: ["☀️", "⛅", "🌧️", "❄️", "🌪️"]
+  },
+  {
+    title: "Глава 7",
+    authorText: `Авторский текст для Главы 7.
+
+Финальные мысли и напутствия.
+Это завершающая глава вашего путешествия.`,
+    questions: [
+      {
+        text: "Как вы себя чувствуете в конце пути?",
+        type: "radio",
+        options: ["Обновленный 🌈", "Уставший 🏁", "Вдохновленный ✨", "Задумчивый 🤔"]
+      },
+      {
+        text: "Что из путешествия возьмете с собой?",
+        type: "checkbox",
+        options: ["Воспоминания 📸", "Опыт 🎓", "Друзей 🤗", "Сувениры 🎁", "Знания 📚"]
+      },
+      {
+        text: "Главный итог путешествия:",
+        type: "text",
+        placeholder: "Подведите итоги..."
+      }
+    ],
+    weatherIcons: ["☀️", "⛅", "🌧️", "❄️", "🌪️"]
+  }
 ];
 
 let currentPage = 0;
+let userData = JSON.parse(localStorage.getItem('travelDiary')) || {};
 
 const book = document.getElementById('book');
 const prevBtn = document.getElementById('prevBtn');
 const nextBtn = document.getElementById('nextBtn');
+const saveNotification = document.getElementById('saveNotification');
+
+// Инициализация данных пользователя
+function initializeUserData() {
+  if (!userData.chapters) {
+    userData.chapters = {};
+  }
+  chapters.forEach((chapter, index) => {
+    if (!userData.chapters[index]) {
+      userData.chapters[index] = {
+        answers: {},
+        selectedWeather: null
+      };
+    }
+  });
+  saveData();
+}
 
 function renderCurrent() {
   book.innerHTML = '';
   
-  // Левая страница с названием главы
+  // Левая страница - для пользователя (вопросы и ответы)
   const leftPage = document.createElement('div');
   leftPage.className = 'page';
   
-  const chapterTitle = document.createElement('h1');
-  chapterTitle.className = 'chapter-title';
-  chapterTitle.textContent = chapters[currentPage].title;
-  leftPage.appendChild(chapterTitle);
+  const leftContent = document.createElement('div');
+  leftContent.className = 'page-content';
   
-  // Правая страница с контентом
+  // Заголовок главы
+  const chapterTitle = document.createElement('h1');
+  chapterTitle.textContent = chapters[currentPage].title;
+  leftContent.appendChild(chapterTitle);
+  
+  // Вопросы с вариантами ответов
+  chapters[currentPage].questions.forEach((question, qIndex) => {
+    const questionDiv = document.createElement('div');
+    questionDiv.className = 'question';
+    
+    const questionText = document.createElement('div');
+    questionText.className = 'question-text';
+    questionText.textContent = question.text;
+    questionDiv.appendChild(questionText);
+    
+    if (question.type === 'radio' || question.type === 'checkbox') {
+      question.options.forEach((option, oIndex) => {
+        const optionDiv = document.createElement('div');
+        optionDiv.className = 'option';
+        
+        const input = document.createElement('input');
+        input.type = question.type;
+        input.name = `q${currentPage}_${qIndex}`;
+        input.value = oIndex;
+        input.checked = userData.chapters[currentPage]?.answers[`q${qIndex}`]?.includes(oIndex.toString());
+        
+        input.addEventListener('change', () => {
+          saveAnswer(qIndex, oIndex, question.type);
+        });
+        
+        const label = document.createElement('label');
+        label.textContent = option;
+        
+        optionDiv.appendChild(input);
+        optionDiv.appendChild(label);
+        questionDiv.appendChild(optionDiv);
+      });
+    } else if (question.type === 'text') {
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.className = 'text-input';
+      input.placeholder = question.placeholder;
+      input.value = userData.chapters[currentPage]?.answers[`q${qIndex}`] || '';
+      
+      input.addEventListener('input', () => {
+        saveTextAnswer(qIndex, input.value);
+      });
+      
+      questionDiv.appendChild(input);
+    }
+    
+    leftContent.appendChild(questionDiv);
+  });
+  
+  // Иконки погоды/настроения
+  const weatherDiv = document.createElement('div');
+  weatherDiv.className = 'weather-icons';
+  
+  chapters[currentPage].weatherIcons.forEach((icon, index) => {
+    const iconDiv = document.createElement('div');
+    iconDiv.className = `weather-icon ${userData.chapters[currentPage]?.selectedWeather === index ? 'selected' : ''}`;
+    iconDiv.textContent = icon;
+    iconDiv.title = `Вариант ${index + 1}`;
+    
+    iconDiv.addEventListener('click', () => {
+      document.querySelectorAll('.weather-icon').forEach(ic => ic.classList.remove('selected'));
+      iconDiv.classList.add('selected');
+      saveWeather(index);
+    });
+    
+    weatherDiv.appendChild(iconDiv);
+  });
+  
+  leftContent.appendChild(weatherDiv);
+  leftPage.appendChild(leftContent);
+  
+  // Правая страница - авторский текст (только для чтения)
   const rightPage = document.createElement('div');
   rightPage.className = 'page';
   
-  const content = document.createElement('div');
-  content.className = 'page-content';
+  const authorTextDiv = document.createElement('div');
+  authorTextDiv.className = 'author-text';
+  authorTextDiv.textContent = chapters[currentPage].authorText;
+  rightPage.appendChild(authorTextDiv);
   
-  if (chapters[currentPage].content.trim() === '') {
-    const placeholder = document.createElement('div');
-    placeholder.className = 'placeholder';
-    placeholder.textContent = 'Записи путешественника…';
-    content.appendChild(placeholder);
-  } else {
-    const body = document.createElement('div');
-    body.innerHTML = chapters[currentPage].content;
-    content.appendChild(body);
-  }
-  
-  rightPage.appendChild(content);
-  
-  // Добавляем обе страницы в книгу
+  // Добавляем страницы в книгу
   book.appendChild(leftPage);
   book.appendChild(rightPage);
+}
+
+function saveAnswer(questionIndex, optionIndex, type) {
+  if (!userData.chapters[currentPage].answers[`q${questionIndex}`]) {
+    userData.chapters[currentPage].answers[`q${questionIndex}`] = [];
+  }
+  
+  if (type === 'radio') {
+    userData.chapters[currentPage].answers[`q${questionIndex}`] = [optionIndex.toString()];
+  } else if (type === 'checkbox') {
+    const answers = userData.chapters[currentPage].answers[`q${questionIndex}`];
+    const index = answers.indexOf(optionIndex.toString());
+    if (index > -1) {
+      answers.splice(index, 1);
+    } else {
+      answers.push(optionIndex.toString());
+    }
+  }
+  
+  saveData();
+  showSaveNotification();
+}
+
+function saveTextAnswer(questionIndex, text) {
+  userData.chapters[currentPage].answers[`q${questionIndex}`] = text;
+  saveData();
+  showSaveNotification();
+}
+
+function saveWeather(weatherIndex) {
+  userData.chapters[currentPage].selectedWeather = weatherIndex;
+  saveData();
+  showSaveNotification();
+}
+
+function saveData() {
+  localStorage.setItem('travelDiary', JSON.stringify(userData));
+}
+
+function showSaveNotification() {
+  saveNotification.classList.add('show');
+  setTimeout(() => {
+    saveNotification.classList.remove('show');
+  }, 2000);
 }
 
 function goToPage(index) {
@@ -258,6 +671,8 @@ function playFlipSound() {
   audio.play().catch(() => {});
 }
 
+// Инициализация
+initializeUserData();
 buildBottomNav();
 renderCurrent();
 prevBtn.onclick = flipBackward;

@@ -2,9 +2,13 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
 <title>Путевой дневник</title>
 <style>
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   background: radial-gradient(circle at center, #3d2b1f 0%, #1a110d 100%);
@@ -15,14 +19,19 @@ body {
   justify-content: center;
   align-items: center;
   overflow: hidden;
+  padding: 10px;
 }
 
 /* контейнер книги */
 .book-container {
   display: flex;
-  width: 800px;
-  height: 500px;
+  width: 100%;
+  max-width: 800px;
+  height: 90vh;
+  max-height: 500px;
   position: relative;
+  transform: scale(0.95);
+  transform-origin: center;
 }
 
 /* корешок книги */
@@ -31,7 +40,7 @@ body {
   left: 50%;
   top: 0;
   transform: translateX(-50%);
-  width: 40px;
+  width: 30px;
   height: 100%;
   background: linear-gradient(90deg, #2f1c0e 0%, #4a2a15 50%, #2f1c0e 100%);
   border-radius: 3px;
@@ -79,9 +88,10 @@ body {
 }
 
 .page-content {
-  padding: 25px;
-  height: calc(100% - 50px);
+  padding: 20px;
+  height: calc(100% - 40px);
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Заголовок главы на левой странице */
@@ -92,7 +102,7 @@ body {
   width: 100%;
   text-align: center;
   transform: translateY(-50%) rotate(-90deg);
-  font-size: 22px;
+  font-size: 18px;
   margin: 0;
   color: #2b1b0f;
   pointer-events: none;
@@ -100,58 +110,66 @@ body {
 
 /* Авторский текст на правой странице */
 .author-text {
-  padding: 25px;
-  font-size: 13px;
-  line-height: 1.5;
+  padding: 20px;
+  font-size: 12px;
+  line-height: 1.4;
   color: #2b1b0f;
   text-align: justify;
   white-space: pre-line;
   overflow-y: auto;
-  max-height: calc(100% - 50px);
+  max-height: calc(100% - 40px);
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Стили для форм */
 .question {
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 }
 
 .question-text {
   font-weight: bold;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   color: #2b1b0f;
-  font-size: 13px;
+  font-size: 12px;
 }
 
 .option {
-  margin: 6px 0;
+  margin: 5px 0;
   display: flex;
   align-items: center;
   cursor: pointer;
+  min-height: 20px;
 }
 
 .option input {
   margin-right: 8px;
   transform: scale(1.1);
+  min-width: 16px;
 }
 
 .option label {
   cursor: pointer;
-  font-size: 12px;
+  font-size: 11px;
   line-height: 1.3;
+  flex: 1;
 }
 
 /* Стиль для рукописного ввода */
 .handwriting-input {
   position: relative;
-  margin: 12px 0;
-  min-height: 30px;
+  margin: 10px 0;
+  min-height: 25px;
   border-bottom: 1px dashed #8B7355;
-  padding: 6px 0;
+  padding: 5px 0;
   cursor: text;
   font-family: 'Georgia', serif;
-  font-size: 13px;
-  line-height: 1.4;
+  font-size: 12px;
+  line-height: 1.3;
   color: #2b1b0f;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
 }
 
 .handwriting-input:focus {
@@ -168,19 +186,25 @@ body {
 .weather-icons {
   display: flex;
   justify-content: center;
-  gap: 15px;
-  margin: 15px 0;
-  padding: 10px;
+  gap: 10px;
+  margin: 12px 0;
+  padding: 8px;
   border-top: 1px dashed #8B7355;
   border-bottom: 1px dashed #8B7355;
+  flex-wrap: wrap;
 }
 
 .weather-icon {
-  font-size: 20px;
+  font-size: 18px;
   cursor: pointer;
-  padding: 8px;
+  padding: 6px;
   border-radius: 50%;
   transition: all 0.3s ease;
+  min-width: 35px;
+  min-height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .weather-icon:hover {
@@ -205,6 +229,7 @@ body {
   transition: opacity 0.3s ease;
   pointer-events: none;
   font-size: 12px;
+  z-index: 1000;
 }
 
 .save-notification.show {
@@ -220,36 +245,49 @@ body {
   justify-content: space-between;
   transform: translateY(-50%);
   z-index: 2;
+  padding: 0 10px;
 }
 
 button {
   background: rgba(255, 255, 255, 0.2);
   border: none;
   color: #fff;
-  padding: 8px 16px;
+  padding: 10px 15px;
   border-radius: 5px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 16px;
   transition: background 0.3s ease;
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 button:hover {
   background: rgba(255, 255, 255, 0.4);
 }
 
+button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 /* нижняя панель навигации */
 .nav-panel {
-  position: absolute;
+  position: fixed;
   bottom: 10px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
-  gap: 4px;
+  gap: 3px;
   flex-wrap: wrap;
   justify-content: center;
   background: rgba(255, 255, 255, 0.1);
-  padding: 4px 8px;
+  padding: 5px 8px;
   border-radius: 8px;
   backdrop-filter: blur(6px);
+  max-width: 95vw;
+  z-index: 100;
 }
 
 .nav-btn {
@@ -257,10 +295,17 @@ button:hover {
   color: #f5f5f5;
   border: none;
   border-radius: 4px;
-  padding: 3px 8px;
-  font-size: 11px;
+  padding: 4px 6px;
+  font-size: 10px;
   cursor: pointer;
   transition: all 0.2s ease;
+  min-width: 40px;
+  min-height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: 1.2;
 }
 .nav-btn:hover {
   background: rgba(255, 255, 255, 0.35);
@@ -284,14 +329,116 @@ button:hover {
 
 .day-indicator {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 5px;
+  right: 5px;
   background: rgba(93, 64, 55, 0.7);
   color: white;
-  padding: 4px 8px;
+  padding: 3px 6px;
   border-radius: 4px;
-  font-size: 11px;
+  font-size: 10px;
   z-index: 3;
+}
+
+/* Адаптация для очень маленьких экранов */
+@media (max-width: 480px) {
+  .book-container {
+    height: 85vh;
+    transform: scale(0.9);
+  }
+  
+  .page-content {
+    padding: 15px;
+  }
+  
+  .author-text {
+    padding: 15px;
+    font-size: 11px;
+  }
+  
+  .question-text {
+    font-size: 11px;
+  }
+  
+  .option label {
+    font-size: 10px;
+  }
+  
+  .handwriting-input {
+    font-size: 11px;
+  }
+  
+  .weather-icon {
+    font-size: 16px;
+    min-width: 30px;
+    min-height: 30px;
+  }
+  
+  .nav-btn {
+    font-size: 9px;
+    min-width: 35px;
+    padding: 3px 5px;
+  }
+  
+  .controls {
+    padding: 0 5px;
+  }
+  
+  button {
+    padding: 8px 12px;
+    min-width: 40px;
+    min-height: 40px;
+  }
+}
+
+@media (max-width: 360px) {
+  .book-container {
+    transform: scale(0.85);
+  }
+  
+  .nav-panel {
+    gap: 2px;
+  }
+  
+  .nav-btn {
+    font-size: 8px;
+    min-width: 32px;
+    padding: 2px 4px;
+  }
+}
+
+/* Предотвращение выделения текста при тапе */
+* {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.handwriting-input, 
+.handwriting-input * {
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
+}
+
+/* Улучшение скролла на iOS */
+.page-content::-webkit-scrollbar,
+.author-text::-webkit-scrollbar {
+  width: 3px;
+}
+
+.page-content::-webkit-scrollbar-track,
+.author-text::-webkit-scrollbar-track {
+  background: rgba(139, 115, 85, 0.1);
+}
+
+.page-content::-webkit-scrollbar-thumb,
+.author-text::-webkit-scrollbar-thumb {
+  background: rgba(93, 64, 55, 0.3);
+  border-radius: 3px;
 }
 </style>
 </head>
@@ -319,7 +466,7 @@ button:hover {
 <div id="saveNotification" class="save-notification">Ответы сохранены!</div>
 
 <script>
-// Добавляем даты к главам
+// Шаблон данных для всех глав с авторским текстом
 const chapters = [
   {
     title: "Глава 1. Шепот феи",
@@ -329,9 +476,9 @@ const chapters = [
 «Скоро ли закружатся хороводы на Лунном Балу?» — пролепетала одна фея, и ее голосок звенел, как слеза.
 «Чувствуешь ли ты, как трепещет в воздухе магия? Она гуще меда и слаще сна!» — воскликнула другая, и от ее слов в воздухе вспыхивали и гасли разноцветные искорки.
 Но вдруг самая малая из них, фея, чье платье было соткано из инея и звездной паутины, прикоснулась к уху сэра Теодора ледяным крылом и прошептала так, что слова отпечатались прямо в его сердце:
-«Тот, кто жаждет обрести утраченную честь, должен слушать не ушами, а душой. Я открою тебе дорогу, если отгдадаешь загадку: Я не меч, но разю врага насмерть. Не щит, но ограждаю от коварства. Что я?*»
+«Тот, кто жаждет обрести утраченную честь, должен слушать не ушами, а душой. Я открою тебе дорогу, если отгадаешь загадку: Я не меч, но разю врага насмерть. Не щит, но ограждаю от коварства. Что я?»
 Сэр Теодор, чей ум был отточен в горниле сражений и интриг, на мгновение задумался, а затем тень улыбки тронула его твердые уста. «Слово чести, — тихо ответил он. — Оно острее любого клинка и прочнее любой брони».
-Ледяная фея, сверкнув, как алмазная слеза, кивнула. «Мудро, рыцарь. Твой дар покоится в *каменном ложе, что стерегут два свирепых льва».
+Ледяная фея, сверкнув, как алмазная слеза, кивнула. «Мудро, рыцарь. Твой дар покоится в каменном ложе, что стерегут два свирепых льва».
 Взгляд Теодора упал на его собственную массивную кровать, у подножия которой, свернувшись в бархатные клубки, сладко посапывали две его кошки — кроткие в своем сне, но гордые, как цари зверей. Он провел ладонью под тяжелым матрасом, и его пальцы наткнулись на нечто холодное и гладкое. Это был не медальон. Это был Серебряный Горн, старинный и изящный, чья поверхность мерцала сокровенным светом.
 Едва он коснулся находки, как в воздухе пропел легкий, как дуновение, перезвон, и слова феи пронеслись в его сознании: «Вознеси к устам своим светозарный рог, и путь откроется перед тобой...»`,
     questions: [
@@ -394,7 +541,7 @@ const chapters = [
       {
         text: "О башне магов. Я чувствовал запах...",
         type: "radio",
-        options: ["Старых книг", "Затхлости", "Камнч", "Магии"]
+        options: ["Старых книг", "Затхлости", "Камня", "Магии"]
       },
       {
         text: "О волшебной палочке. Ее материал удивительный! От нее исходил _______ цвет.",
@@ -453,7 +600,7 @@ const chapters = [
     title: "Глава 5. Отшельница",
     date: "22 декабря",
     authorText: `Теодор одним глотком опрокинул фляжку. Эликсир Силы обжег горло ледяной свежестью, которая тут же сменилась волной тепла, разлившейся по жилам. В груди, за костью, что хранит сердце, забился новый, уверенный ритм — ритм решимости. Он кивком поблагодарил Безымянную стражу Росуарского Леса и шагнул вперёд, чувствуя, как тяжесть сменяется невесомостью.
-Пейзажи вокруг плавно перетекали друг в друга. Танцующие капли росы сменились хороводом опадающих листьев, а стройные деревца на глазах тянулись к небу, превращаясь в величественные, раскидистые дубы. Теодор шёл, доверившись зову в собственном сердце, и вскоре между стволов, словно сама природа, выстроившая себе жилище, показалась уютная, поросшая мхом избушка.
+Пейзажи вокруг плавно перетекали друг в друга. Танцующие капли росу сменились хороводом опадающих листьев, а стройные деревца на глазах тянулись к небу, превращаясь в величественные, раскидистые дубы. Теодор шёл, доверившись зову в собственном сердце, и вскоре между стволов, словно сама природа, выстроившая себе жилище, показалась уютная, поросшая мхом избушка.
 Внезапно с раскидистой ветви дуба прямо перед ним с легким шуршанием свалилась девушка в платье цвета летней листвы. Спутанные волосы персикового цвета скрывали ее лицо.
 
 — Ты всё это время наблюдала за мной? — догадался Теодор, даже не удивившись.

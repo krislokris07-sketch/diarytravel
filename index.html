@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Путевой дневник</title>
+<style>
+body {
+  margin: 0;
+  background: radial-gradient(circle at center, #3d2b1f 0%, #1a110d 100%);
+  font-family: 'Georgia', serif;
+  color: #2b1b0f;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+/* контейнер книги */
+.book-wrap {
+  perspective: 2000px;
+  width: 800px;
+  height: 500px;
+  position: relative;
+  transform-style: preserve-3d;
+}
+
+/* корешок книги */
+.book-spine {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 100%;
+  background: linear-gradient(90deg, #2f1c0e 0%, #4a2a15 50%, #2f1c0e 100%);
+  border-radius: 3px;
+  box-shadow: inset 2px 0 6px rgba(0,0,0,0.6), inset -2px 0 6px rgba(0,0,0,0.6);
+  z-index: 1;
+}
+
+/* книга */
+.book {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transform-origin: left center;
+}
+
+/* страницы */
+.page {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: url("parchment_texture.jpg") center/cover no-repeat;
+  box-shadow: inset 0 0 120px rgba(0,0,0,0.2);
+  border-radius: 8px;
+  transform-origin: left;
+  transition: transform 1s ease;
+  overflow: hidden;
+}
+
+/* эффект внутреннего блика */
+.page::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: radial-gradient(ellipse at left, rgba(255,255,255,0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.page-content {
+  padding: 40px;
+  overflow-y: auto;
+  height: calc(100% - 80px);
+}
+
+h1 {
+  font-size: 26px;
+  text-align: center;
+  margin-top: 0;
+}
+
+.placeholder {
+  text-align: center;
+  font-style: italic;
+  color: rgba(0,0,0,0.4);
+  margin-top: 150px;
+  font-size: 18px;
+  letter-spacing: 1px;
+}
+
+/* кнопки навигации */
+.controls {
+  position: absolute;
+  top: 50%;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  transform: translateY(-50%);
+  z-index: 2;
+}
+
+button {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background 0.3s ease;
+}
+button:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+/* нижняя панель навигации */
+.nav-panel {
+  position: absolute;
+  bottom: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 6px 12px;
+  border-radius: 10px;
+  backdrop-filter: blur(6px);
+}
+
+.nav-btn {
+  background: rgba(255, 255, 255, 0.2);
+  color: #f5f5f5;
+  border: none;
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.nav-btn:hover {
+  background: rgba(255, 255, 255, 0.35);
+  transform: translateY(-1px);
+}
+.nav-btn.active {
+  background: rgba(255, 255, 255, 0.5);
+  color: #222;
+  font-weight: 600;
+}
+</style>
+</head>
+<body>
+<div class="book-wrap">
+  <div class="book-spine"></div>
+  <div id="book" class="book"></div>
+  <div class="controls">
+    <button id="prevBtn">⟨</button>
+    <button id="nextBtn">⟩</button>
+  </div>
+</div>
+
+<script>
+const chapters = [
+  { title: "Глава 1", content: "" },
+  { title: "Глава 2", content: "" },
+  { title: "Глава 3", content: "" },
+  { title: "Глава 4", content: "" },
+  { title: "Глава 5", content: "" },
+  { title: "Глава 6", content: "" },
+  { title: "Глава 7", content: "" }
+];
+
+let currentPage = 0;
+
+const book = document.getElementById('book');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+
+function renderCurrent() {
+  book.innerHTML = '';
+  const page = document.createElement('div');
+  page.className = 'page';
+  const content = document.createElement('div');
+  content.className = 'page-content';
+  const h1 = document.createElement('h1');
+  h1.textContent = chapters[currentPage].title;
+  content.appendChild(h1);
+
+  if (chapters[currentPage].content.trim() === '') {
+    const placeholder = document.createElement('div');
+    placeholder.className = 'placeholder';
+    placeholder.textContent = 'Записи путешественника…';
+    content.appendChild(placeholder);
+  } else {
+    const body = document.createElement('div');
+    body.innerHTML = chapters[currentPage].content;
+    content.appendChild(body);
+  }
+
+  page.appendChild(content);
+  book.appendChild(page);
+}
+
+function goToPage(index) {
+  if (index < 0 || index >= chapters.length) return;
+  currentPage = index;
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.nav-btn')[index].classList.add('active');
+  renderCurrent();
+  playFlipSound();
+}
+
+function flipForward() { goToPage(currentPage + 1); }
+function flipBackward() { goToPage(currentPage - 1); }
+
+function buildBottomNav() {
+  const nav = document.createElement('div');
+  nav.className = 'nav-panel';
+  chapters.forEach((ch, i) => {
+    const btn = document.createElement('button');
+    btn.textContent = ch.title;
+    btn.className = 'nav-btn';
+    if (i === 0) btn.classList.add('active');
+    btn.onclick = () => goToPage(i);
+    nav.appendChild(btn);
+  });
+  document.body.appendChild(nav);
+}
+
+function playFlipSound() {
+  const audio = new Audio('https://cdn.pixabay.com/audio/2022/03/10/audio_9c55b3c9e9.mp3');
+  audio.volume = 0.3;
+  audio.play().catch(() => {});
+}
+
+buildBottomNav();
+renderCurrent();
+prevBtn.onclick = flipBackward;
+nextBtn.onclick = flipForward;
+</script>
+</body>
+</html>
